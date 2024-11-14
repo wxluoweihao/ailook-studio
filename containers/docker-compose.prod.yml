@@ -16,7 +16,7 @@ services:
             - /opt/querybook/node_modules/
             # Make sure the build files don't leak back
             - /opt/querybook/dist/
-            - $PWD/containers/querybook_config.yaml:/opt/querybook/querybook/config/querybook_config.yaml
+            - $PWD/querybook/config/querybook_config.yaml:/opt/querybook/querybook/config/querybook_config.yaml
     web:
         extends:
             service: base
