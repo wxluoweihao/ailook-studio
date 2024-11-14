@@ -34,7 +34,7 @@ services:
         image: redis:5.0.9
         restart: always
         command: [ 'redis-server', '--appendonly', 'yes' ]
-        hostname: redis
+#        hostname: redis
         ports:
             - '6379:6379'
         healthcheck:
