@@ -6,6 +6,9 @@ FROM python:3.9.16
 ARG PRODUCTION=true
 ARG EXTRA_PIP_INSTALLS=""
 
+RUN cat /etc/apt/sources.list
+RUN sed -i '/^deb http:/s|http|https|' /etc/apt/sources.list
+RUN cat /etc/apt/sources.list
 ## Install Querybook package requirements + NodeJS
 # Installing build-essential and python-dev for uwsgi
 RUN mkdir -p /etc/apt/keyrings && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
