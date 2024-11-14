@@ -16,6 +16,7 @@ export enum QueryExecutionStatus {
     DONE,
     ERROR,
     CANCEL,
+    AI_SUMMARIZING
 }
 
 export enum StatementExecutionStatus {
@@ -104,6 +105,8 @@ export interface IStatementExecution {
 
     // These properties may or may not be there during the initial load
     query_execution_id?: number;
+    statement_sql?: string;
+    ai_explain?:string,
     log?: string[];
     downloadUrl?: string;
     downloadUrlFailed?: boolean;

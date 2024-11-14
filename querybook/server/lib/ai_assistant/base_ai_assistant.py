@@ -4,8 +4,10 @@ from abc import ABC, abstractmethod
 from langchain_core.language_models.base import BaseLanguageModel
 from langchain_core.output_parsers import JsonOutputParser, StrOutputParser
 from pydantic import ValidationError
+from sqlalchemy import create_engine, MetaData
+from sqlalchemy.orm import sessionmaker
 
-from app.db import with_session
+from app.db import with_session, DBSession
 from const.ai_assistant import (
     DEFAUTL_TABLE_SELECT_LIMIT,
     MAX_SAMPLE_QUERY_COUNT_FOR_TABLE_SUMMARY,
@@ -34,6 +36,7 @@ from .tools.table_schema import (
     get_table_schema_by_name,
     get_table_schemas_by_names,
 )
+from ..utils import json
 
 LOG = get_logger(__file__)
 
@@ -45,6 +48,10 @@ class BaseAIAssistant(ABC):
 
     def set_config(self, config: dict):
         self._config = config
+        connect_str = "postgresql+psycopg2://marquez-user:mZ7J1F4IYqY6mbIY53Jgu1aL9lqpfjtjdJ5zMRjz9yoC0rL02cweCopEXans2gr4@8.210.27.71:15432/marquez"
+        self.engine = create_engine(connect_str)
+        self.session = sessionmaker(bind=self.engine)
+        self.metadata = MetaData(bind=self.engine)
 
     @abstractmethod
     def _get_token_count(self, ai_command: str, prompt: str) -> int:
@@ -150,8 +157,8 @@ class BaseAIAssistant(ABC):
             table_schema=table_schema, sample_queries=prompt_sample_queries
         )
 
-    def _get_sql_summary_prompt(self, table_schemas, query):
-        return SQL_SUMMARY_PROMPT.format(table_schemas=table_schemas, query=query)
+    def _get_sql_summary_prompt(self, table_schemas, query, lineages):
+        return SQL_SUMMARY_PROMPT.format(table_schemas=table_schemas, query=query, lineages=lineages)
 
     def _get_table_select_prompt(self, top_n, question, table_schemas):
         return TABLE_SELECT_PROMPT.format(
@@ -200,6 +207,20 @@ class BaseAIAssistant(ABC):
             response = chain.invoke(prompt_text)
             socket.send_data(response)
             socket.close()
+
+    def __get_dataset_lineages(self):
+        with self.engine.connect() as connection:
+            # Fetch all rows
+            rows = connection.execute("""
+            select lineage
+            from dataset_lineages_view
+            """)
+
+            connection.close()
+
+            result_list = [row[0] for row in rows]
+            return "\n ".join(result_list)
+
 
     @catch_error
     @with_session
@@ -371,6 +392,38 @@ class BaseAIAssistant(ABC):
         chain = llm | StrOutputParser()
         return chain.invoke(prompt)
 
+    def __list_table_from_sql(spark_sql_code: str, llm_model: str = 'qwen2.5-72b-instruct'):
+        import os
+        import re
+        from openai import OpenAI
+
+        msg = f"""SQL Code: ```{spark_sql_code}```
+        requirements:
+        1. Give the result in the Json format. Only conside tables that already exist in DB or saved to DB finally.
+        'tables': a list of tables. These tables already exist in DB, and their rows are not changed. Use comma to seperate the tables.
+        2. Give the json result only.
+        """
+        try:
+            client = OpenAI(
+                api_key="sk-13eeac42861e466b9e3dbead89a8005c",
+                base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+            )
+            completion = client.chat.completions.create(
+                model='qwen2.5-72b-instruct',
+                messages=[
+                    {'role': 'system',
+                     'content': 'You are a SQL expert. Given a Spark SQL code, please help user to list tables used in the code'},
+                    {'role': 'user', 'content': msg}],
+            )
+            pattern = r'```json(.*?)```'
+
+            matches = re.findall(pattern, completion.choices[0].message.content, re.DOTALL)
+            return {'result': matches[0]}
+        except Exception as e:
+            # This block will execute if an error occurs in the try block
+            print(f"An error occurred: {e}")
+            return {'result': "```json\n\n```"}
+
     @catch_error
     @with_session
     def summarize_query(
@@ -382,14 +435,25 @@ class BaseAIAssistant(ABC):
     ):
         """Generate an informative summary of the query."""
 
-        table_schemas = get_table_schemas_by_names(
-            metastore_id=metastore_id,
-            full_table_names=table_names,
-            should_skip_column=self._should_skip_column,
-            session=session,
-        )
+        if table_names is None:
+            table_schemas = "No schemas avaiable"
+        else:
+            table_schemas = get_table_schemas_by_names(
+                metastore_id=metastore_id,
+                full_table_names=table_names,
+                should_skip_column=self._should_skip_column,
+                session=session,
+            )
 
-        prompt = self._get_sql_summary_prompt(table_schemas=table_schemas, query=query)
+        lineages_str = self.__get_dataset_lineages()
+        print("############ Lineage information ################")
+        print(lineages_str)
+        # if table_names is not None:
+        #     for table_name in table_names:
+        #         lineage = self.__get_dataset_lineages(table_name)
+        #         lineages.append("dataset: " + table_name + ":\n" + lineage)
+        #     lineages_str = "\n ".join(lineages)
+        prompt = self._get_sql_summary_prompt(table_schemas=table_schemas, query=query, lineages=lineages_str)
         llm = self._get_llm(
             ai_command=AICommandType.SQL_SUMMARY.value,
             prompt_length=self._get_token_count(

@@ -1,2 +1,47 @@
-# Please override by supply your own config here
-# See docs/configurations/infra_config.md see how
+# Make sure this is consistent with mysql part of docker-compose.yml
+FLASK_SECRET_KEY: SOME_RANDOM_SECRET_KEY
+
+DATABASE_CONN: postgresql+psycopg2://querybook-user:lq3X7mU0nGrFrUcUlwsdlL9cl9vBsjL4Mt3XmXbE1PyZFSpeSs63EgWf3IG7yPjc@8.210.27.71:45432/postgres
+REDIS_URL: redis://redis:6379/0
+ELASTICSEARCH_HOST: http://elasticsearch:9200
+# ELASTICSEARCH_CONNECTION_TYPE: aws
+# Uncomment for email
+# EMAILER_CONN: dockerhostforward
+
+# Uncomment below to enable AI Assistant for local development.
+AI_ASSISTANT_PROVIDER: TongyiAssistant
+AI_ASSISTANT_CONFIG:
+     default:
+         model_args:
+             model: 'qwen-max'
+             api_key: 'sk-13eeac42861e466b9e3dbead89a8005c'
+             temperature: 0
+         reserved_tokens: 1024
+     table_summary:
+         model_args:
+             model: 'qwen-max'
+             api_key: 'sk-13eeac42861e466b9e3dbead89a8005c'
+             temperature: 0
+     sql_summary:
+         model_args:
+             model: 'qwen-max'
+             api_key: 'sk-13eeac42861e466b9e3dbead89a8005c'
+             temperature: 0
+     table_select:
+         model_args:
+             model: 'qwen-max'
+             api_key: 'sk-13eeac42861e466b9e3dbead89a8005c'
+             temperature: 0
+
+# Uncomment below to enable vector store to support embedding based table search.
+# Please check langchain doc for the configs of each provider.
+
+EMBEDDINGS_PROVIDER: dashscope
+EMBEDDINGS_CONFIG:
+    dashscope_api_key: 'sk-13eeac42861e466b9e3dbead89a8005c'
+
+VECTOR_STORE_PROVIDER: opensearch
+VECTOR_STORE_CONFIG:
+     opensearch_url: http://elasticsearch:9200
+     index_name: 'vector_index_v1'
+     embeddings_arg_name: 'embedding_function'

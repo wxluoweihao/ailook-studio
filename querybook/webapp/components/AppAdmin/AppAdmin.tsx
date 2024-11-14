@@ -120,7 +120,7 @@ const AppAdmin: React.FunctionComponent = () => {
         <div className="AdminLanding">
             <div className="AdminLanding-top">
                 <div className="AdminLanding-title">
-                    Welcome to the {getAppName()} Admin App
+                    Welcome to the {getAppName()} !
                 </div>
                 <div className="AdminLanding-desc">
                     All your settings are here.

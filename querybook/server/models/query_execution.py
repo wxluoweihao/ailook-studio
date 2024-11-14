@@ -129,6 +129,8 @@ class StatementExecution(Base):
 
     has_log = sql.Column(sql.Boolean, nullable=False, default=False)
     log_path = sql.Column(sql.String(length=url_length))
+    statement_sql = sql.Column(sql.Text(), nullable=True)
+    ai_explain = sql.Column(sql.Text(), nullable=True)
 
     @with_formatted_date
     def to_dict(self):
@@ -145,6 +147,8 @@ class StatementExecution(Base):
             "result_path": self.result_path,
             "has_log": self.has_log,
             "log_path": self.log_path,
+            "statement_sql": self.statement_sql,
+            "ai_explain": self.ai_explain
         }
 
         return item

@@ -3,3 +3,4 @@
 -r engine/presto.txt
 -r engine/trino.txt
 -r metastore/hms.txt
+-r platform/aws.txt

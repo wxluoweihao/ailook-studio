@@ -166,7 +166,7 @@ export const DataDocStatementExecution: React.FC<IProps> = ({
                 <div className="statement-execution-text-container">
                     <div className="statement-execution-text-title">
                         <span className="statement-status-label">
-                            Status: Uploading
+                            Status: Uploading Query
                         </span>
                     </div>
                     {getMetaInfoDOM()}

@@ -2,6 +2,8 @@ import re
 from abc import abstractmethod
 from typing import Literal, Optional
 
+from langchain_community.vectorstores import opensearch_vector_search
+
 from const.ai_assistant import (
     DEFAUTL_TABLE_SEARCH_LIMIT,
     DEFAULT_VECTOR_STORE_FETCH_LIMIT,
@@ -83,17 +85,19 @@ class VectorStoreBase(VectorStore):
         if search_type:
             must_query.append({"term": {"metadata.type": search_type}})
         boolean_filter = {"bool": {"must": must_query}}
-
         docs_with_score = self.similarity_search_with_score(
             text, k=fetch_k, boolean_filter=boolean_filter
         )
+
+        # for (doc, score) in docs_with_score:
+        #     print("########## " + str(score))
+
         tables = [
             (table_name, score, doc.metadata.get("type"))
             for (doc, score) in docs_with_score
             for table_name in doc.metadata.get("tables", [])
-            if score > threshold
-        ]
 
+        ]
         table_score_dict = {}
         for table_name, score, type in tables:
             # TODO: need to tune the scoring strategy

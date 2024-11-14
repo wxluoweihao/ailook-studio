@@ -1,4 +1,5 @@
 from const.ai_assistant import AI_ASSISTANT_NAMESPACE, AICommandType
+from env import QuerybookSettings
 from lib.ai_assistant import ai_assistant
 
 from .helper import register_socket

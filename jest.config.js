@@ -16,7 +16,7 @@ const config = {
     globalSetup: '<rootDir>/__tests__/setup/jest-global-setup.js',
     globals: {
         __VERSION__: '1.0.0',
-        __APPNAME__: 'Querybook',
+        __APPNAME__: 'AILook Studio',
         __ENVIRONMENT__: 'production',
     },
     transformIgnorePatterns: [],

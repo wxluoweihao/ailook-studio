@@ -35,6 +35,8 @@ export const trackView = (
         element,
         aux,
     };
+
+    console.log(eventData)
     track(EventType.VIEW, eventData);
 };
 

@@ -90,7 +90,7 @@ const DefaultLanding: React.FC = ({ children }) => {
                     Hi {titleize(userInfo.fullname || userInfo.username)},
                 </div>
                 <div className="Landing-subtitle">
-                    Welcome back to Querybook
+                    Welcome back to AI Lineage
                 </div>
             </div>
             <QuerybookSidebarUIGuide />

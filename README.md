@@ -1,6 +1,6 @@
-# AI Lineage (derived from querybook)
+# AILook Studio
 
-AI Lineage is a tool base on querybook Big Data IDE that allows you to discover, create, and share data analyses, queries, and tables.
+AI Look Studio is a tool base on querybook Big Data IDE that allows you to discover, create, and share data analyses, queries, and tables.
 
 For querybook, please check below:
 [Check out the full documentation & feature highlights here.](https://querybook.org)

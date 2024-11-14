@@ -95,7 +95,8 @@ AI_ASSISTANT_PROVIDER: ~
 AI_ASSISTANT_CONFIG:
     default:
         model_args:
-            model_name: ~
+            model_name: 'qwen-max'
+            api_key: 'sk-13eeac42861e466b9e3dbead89a8005c'
             temperature: ~
             streaming: ~
         reserved_tokens: ~

@@ -19,7 +19,7 @@ MAX_SAMPLE_QUERY_COUNT_FOR_TABLE_SUMMARY = 5
 
 
 # the minimum score for a table to be considered as a match
-DEFAULT_SIMILARITY_SCORE_THRESHOLD = 0.6
+DEFAULT_SIMILARITY_SCORE_THRESHOLD = 0.0000001
 # the minimum score for a table to be considered as a great match
 DEFAULT_SIMILARITY_SCORE_THRESHOLD_GREAT_MATCH = 0.7
 # how many docs to fetch from vector store, it may include both table and query summary docs and they need additional processing.

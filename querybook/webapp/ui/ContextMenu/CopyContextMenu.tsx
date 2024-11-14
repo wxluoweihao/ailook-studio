@@ -26,7 +26,7 @@ export const CopyContextMenu: React.FC<ICopyContextMenuProps> = ({
             contextMenuRef.current?.hide();
 
             copy(text);
-            toast.success('Copied');
+            toast.success('AILooking!');
         },
         [text]
     );

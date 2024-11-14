@@ -162,14 +162,17 @@ def get_query_execution_by_ids(ids, session=None):
 @with_session
 def get_environments_by_execution_id(execution_id, session=None):
     return (
-        session.query(Environment)
-        .join(QueryEngineEnvironment)
-        .join(QueryEngine)
-        .join(QueryExecution)
-        .filter(QueryExecution.id == execution_id)
-        .all()
+        session.query(Environment).join(QueryEngineEnvironment).join(QueryEngine).join(QueryExecution).filter(QueryExecution.id == execution_id).all()
     )
 
+@with_session
+def get_metastore_id_by_execution_id(execution_id, session=None):
+    return (
+        session.query(QueryEngine).join(QueryExecution).join(QueryEngineEnvironment)
+        .filter(QueryExecution.id == execution_id)
+        .filter(QueryEngineEnvironment.query_engine_id == QueryExecution.engine_id and QueryEngine.id == QueryExecution.engine_id)
+        .all()
+    )
 
 @with_session
 def create_query_execution_metadata(
@@ -208,6 +211,7 @@ def get_query_execution_metadata_by_execution_id(
 @with_session
 def create_statement_execution(
     query_execution_id,
+    query_statement,
     statement_range_start,
     statement_range_end,
     status=0,
@@ -219,6 +223,7 @@ def create_statement_execution(
         statement_range_start=statement_range_start,
         statement_range_end=statement_range_end,
         status=status,
+        statement_sql=query_statement
     )
     session.add(statement_execution)
 
@@ -240,6 +245,8 @@ def update_statement_execution(
     result_path=None,
     has_log=None,
     log_path=None,
+    statement_sql=None,
+    ai_explain=None,
     commit=True,
     session=None,
 ):
@@ -269,6 +276,12 @@ def update_statement_execution(
     if log_path is not None:
         statement_execution.log_path = log_path
 
+    if statement_sql is not None:
+        statement_execution.statement_sql = statement_sql
+
+    if ai_explain is not None:
+        statement_execution.ai_explain = ai_explain
+
     if commit:
         session.commit()
         statement_execution.id
@@ -285,6 +298,10 @@ def get_statement_execution_by_id(id, with_query_execution=False, session=None):
 
     return query.get(id)
 
+@with_session
+def get_statement_execution_by_exec_id(id, session=None):
+    query = session.query(StatementExecution).filter(StatementExecution.query_execution_id == id).first()
+    return query
 
 @with_session
 def get_last_statement_execution_by_query_execution(query_execution_id, session=None):
@@ -295,7 +312,7 @@ def get_last_statement_execution_by_query_execution(query_execution_id, session=
         .order_by(StatementExecution.id.desc())
         .limit(1)
     )
-    return query.first()
+    return query
 
 
 """

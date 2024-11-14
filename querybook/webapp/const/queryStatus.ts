@@ -11,7 +11,8 @@ export enum Status {
 export const STATUS_TO_TEXT_MAPPING = {
     [QueryExecutionStatus.INITIALIZED]: 'Initializing',
     [QueryExecutionStatus.DELIVERED]: 'Received By Worker',
-    [QueryExecutionStatus.RUNNING]: 'Running',
+    [QueryExecutionStatus.AI_SUMMARIZING]: 'AI Summarizing',
+    [QueryExecutionStatus.RUNNING]: 'Executing Query/Queries',
     [QueryExecutionStatus.DONE]: 'Success',
     [QueryExecutionStatus.ERROR]: 'Error',
     [QueryExecutionStatus.CANCEL]: 'Cancelled',
@@ -20,6 +21,7 @@ export const STATUS_TO_TEXT_MAPPING = {
 export const queryStatusToStatusIcon = {
     [QueryExecutionStatus.INITIALIZED]: Status.running,
     [QueryExecutionStatus.DELIVERED]: Status.running,
+    [QueryExecutionStatus.AI_SUMMARIZING]: Status.running,
     [QueryExecutionStatus.RUNNING]: Status.running,
     [QueryExecutionStatus.DONE]: Status.success,
     [QueryExecutionStatus.ERROR]: Status.error,

@@ -25,6 +25,7 @@ import { QuerySteps } from './QuerySteps';
 import { SamplingTooltip } from './SamplingToolTip';
 
 import './QueryExecution.scss';
+import {QuerySummary} from "./QuerySummary";
 
 interface IProps {
     id: number;
@@ -196,6 +197,7 @@ export const QueryExecution: React.FC<IProps> = ({
                     {queryStepsDOM}
                     {samplingToolTipDOM}
                     {getQueryExecutionErrorDOM()}
+                    {getQuerySUmmary()}
                     {getStatementExecutionHeaderDOM()}
                     {executedQueryDOM}
                     <div className="query-execution-content">
@@ -255,6 +257,17 @@ export const QueryExecution: React.FC<IProps> = ({
                     statementExecutions={statementExecutions}
                     readonly={!isEditable}
                     changeCellContext={changeCellContext}
+                />
+            );
+        }
+    };
+
+    const getQuerySUmmary = () => {
+        if (queryExecution.status === QueryExecutionStatus.DONE) {
+            return (
+                <QuerySummary
+                    queryExecution={queryExecution}
+                    statementExecutions={statementExecutions}
                 />
             );
         }

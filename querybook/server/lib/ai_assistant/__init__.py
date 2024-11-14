@@ -1,7 +1,7 @@
 from env import QuerybookSettings
 
 from .all_ai_assistants import get_ai_assistant_class
-
+from .assistants.tongyi_assistant import TongyiAssistant
 
 if QuerybookSettings.AI_ASSISTANT_PROVIDER:
     ai_assistant = get_ai_assistant_class(QuerybookSettings.AI_ASSISTANT_PROVIDER)

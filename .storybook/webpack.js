@@ -57,7 +57,7 @@ module.exports = async (config) => {
         new webpack.DefinePlugin({
             __VERSION__: JSON.stringify(require('../package.json').version),
             __APPNAME__: JSON.stringify(
-                process.env.QUERYBOOK_APPNAME ?? 'Querybook'
+                process.env.QUERYBOOK_APPNAME ?? 'AILook Studio'
             ),
             __ENVIRONMENT__: JSON.stringify(
                 process.env.NODE_ENV ?? 'production'

@@ -17,8 +17,8 @@ depends_on = None
 
 
 def upgrade():
-    MediumText = sa.Text(length=16777215)
-    Text = sa.Text(length=65535)
+    MediumText = sa.Text()
+    Text = sa.Text()
     conn = op.get_bind()
     if conn.dialect.name == "postgresql":
         MediumText = sa.Text()

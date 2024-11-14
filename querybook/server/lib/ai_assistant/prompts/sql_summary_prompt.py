@@ -2,24 +2,32 @@ from langchain.prompts import PromptTemplate
 
 
 prompt_template = """
-You are a helpful assistant that can help document SQL queries.
-
-Please document below SQL query by the given table schemas.
+You are a helpful assistant that can help to give very comprehensive and precise summary on SQL queries.
+Your summary will base on following sql query, datasets lineages, and table schema.
 
 ===SQL Query
 {query}
+
+===Datasets Lineages
+{lineages}
 
 ===Table Schemas
 {table_schemas}
 
 ===Response Guidelines
-Please provide the following list of descriptions for the query:
--The selected columns and their description
--The input tables of the query and the join pattern
--Query's detailed transformation logic in plain english, and why these transformation are necessary
--The type of filters performed by the query, and why these filters are necessary
--Write very detailed purposes and motives of the query in detail
--Write possible business and functional purposes of the query
+
+1. Explain the purposes of using these tables under one title.
+
+2. Elucidate the lineages relationship among the tables within one title.
+
+3. Provide a conclusion under one title.
+
+4. Ensure that your format is easily readable.
+
+5. There must be two line breaks between each paragraph and title.
+
+6. Titles should be in bold.
+
 """
 
 SQL_SUMMARY_PROMPT = PromptTemplate.from_template(prompt_template)

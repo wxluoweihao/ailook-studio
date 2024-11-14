@@ -52,7 +52,7 @@ export const StatementResultTableColumn: React.FC<
         <CopyContextMenuWrapper
             className="result-table-header horizontal-space-between"
             text={column}
-            copyName="Copy column name"
+            copyName="Investigate upperstream logic"
         >
             <span
                 className={`statement-result-table-title one-line-ellipsis ${

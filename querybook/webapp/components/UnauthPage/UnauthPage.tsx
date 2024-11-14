@@ -73,7 +73,7 @@ export const UnauthPage = React.memo<IUnauthPageProps>(
                     <div className="center-align mb8">
                         <QuerybookLogo />
                     </div>
-                    {querybookWarningMessage}
+                    {/*{querybookWarningMessage}*/}
                     <Box>
                         {showSignUp && (
                             <Tabs

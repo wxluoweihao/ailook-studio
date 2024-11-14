@@ -133,8 +133,8 @@ export const AutoFixButton = ({
                     className="AutoFixModal"
                 >
                     <Message
-                        message="Note: This AI-powered auto fix may not be 100% accurate. Please use your own judgement and verify the result."
-                        type="warning"
+                        message="Note: AILook will try to provide you the best result !"
+                        type="info"
                     />
                     {explanation && (
                         <div>

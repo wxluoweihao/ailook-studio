@@ -1,7 +1,8 @@
-from querybook.server.lib.ai_assistant.assistants.openai_assistant import OpenAIAssistant
+from langchain_community.llms.tongyi import Tongyi
 
+from lib.ai_assistant.assistants.tongyi_assistant import TongyiAssistant
 
-ALL_PLUGIN_AI_ASSISTANTS = []
+ALL_PLUGIN_AI_ASSISTANTS = [TongyiAssistant()]
 
 # Example to add openai assistant
 #

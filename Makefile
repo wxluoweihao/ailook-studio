@@ -29,7 +29,7 @@ prod_scheduler:
 	docker-compose -f containers/docker-compose.prod.yml run scheduler
 
 prod_image:
-	docker build --pull -t querybook .
+	docker build --pull -t ailook-web .
 
 dev_image:
 	docker build --pull -t querybook-dev . --build-arg PRODUCTION=false --build-arg EXTRA_PIP_INSTALLS=dev.txt
@@ -46,7 +46,7 @@ docs:
 install: install_pip_runtime_dependencies install_yarn_packages
 
 install_pip_runtime_dependencies:
-	pip install -r ./requirements.txt
+	pip install --proxy http://127.0.0.1:7897 -r ./requirements.txt
 
 install_yarn_packages: node_modules
 node_modules: package.json

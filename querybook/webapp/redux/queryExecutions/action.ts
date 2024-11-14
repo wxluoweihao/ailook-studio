@@ -676,6 +676,9 @@ class QueryExecutionSocket {
             this.socket.on('query_end', (queryExecution: IQueryExecution) => {
                 this.processQueryExecution(queryExecution);
             });
+            this.socket.on('ai_summarizing', (queryExecution: IQueryExecution) => {
+                this.processQueryExecution(queryExecution);
+            });
             this.socket.on(
                 'statement_start',
                 (statementExecution: IStatementExecution) => {

@@ -125,8 +125,10 @@ def vector_search_tables(
     # delayed import only if vector search is enabled
     from logic import vector_store as vs_logic
 
-    verify_metastore_permission(metastore_id)
-    return vs_logic.search_tables(metastore_id, keywords, filters)
+    #verify_metastore_permission(metastore_id)
+    msg = vs_logic.search_tables(metastore_id, keywords, filters)
+    print(msg)
+    return msg
 
 
 @register("/suggest/<int:metastore_id>/tables/", methods=["GET"])

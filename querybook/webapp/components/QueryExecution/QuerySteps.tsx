@@ -13,15 +13,11 @@ export const QuerySteps: React.FunctionComponent<{
         total,
     },
 }) => {
-    if (status >= 3) {
-        // Finished state
-        return null;
-    }
-
     let currentStep = 0;
     const steps = [
         'Send to worker',
         'Connect to engine',
+        'AI Summarizing',
         'Running Query',
         'Finish',
     ];
@@ -31,15 +27,24 @@ export const QuerySteps: React.FunctionComponent<{
         currentStep++;
 
         if (
-            status === QueryExecutionStatus.RUNNING &&
             statementExecutionIds != null
         ) {
             // We have connected to engine
             currentStep++;
-            if (total != null) {
+            if(total != null && status === QueryExecutionStatus.AI_SUMMARIZING) {
+                currentStep++;
+            }
+
+            if (total != null && status === QueryExecutionStatus.RUNNING) {
+                currentStep++;
                 steps[2] = `${steps[2]} ${statementExecutionIds.length}/${total}`;
+                steps[3] = `${steps[3]} ${statementExecutionIds.length}/${total}`;
             }
         }
+    }
+
+    if (status >= 3) {
+        return <StepsBar steps={steps} activeStep={4} />;
     }
 
     return <StepsBar steps={steps} activeStep={currentStep} />;

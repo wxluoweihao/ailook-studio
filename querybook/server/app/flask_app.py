@@ -148,11 +148,7 @@ def make_socketio(app):
         path="-/socket.io",
         message_queue=QuerybookSettings.REDIS_URL,
         json=flask_json,
-        cors_allowed_origins=(
-            QuerybookSettings.WS_CORS_ALLOWED_ORIGINS
-            if QuerybookSettings.PRODUCTION
-            else "*"
-        ),
+        cors_allowed_origins=(QuerybookSettings.WS_CORS_ALLOWED_ORIGINS),
     )
     return socketio
 

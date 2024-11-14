@@ -2,10 +2,9 @@ from abc import ABCMeta, abstractclassmethod
 import datetime
 import time
 from typing import Union, List
-
 from app.db import DBSession
 from app.flask_app import socketio
-
+from lib.ai_assistant import ai_assistant
 
 from const.db import description_length
 from const.query_execution import (
@@ -13,6 +12,8 @@ from const.query_execution import (
     StatementExecutionStatus,
     QUERY_EXECUTION_NAMESPACE,
 )
+from env import QuerybookSettings
+from lib.ai_assistant import ai_assistant
 
 from lib.form import AllFormField
 from lib.logger import get_logger
@@ -114,14 +115,41 @@ class QueryExecutorLogger(object):
         self._meta_info = ""  # statement_urls
         self._percent_complete = None  # percent_complete
 
+    def on_ai_summarizing_start(self):
+        with DBSession() as session:
+
+            query_execution = qe_logic.get_statement_execution_by_exec_id(
+                self._query_execution_id,
+                session=session,
+            ).to_dict()
+
+        socketio.emit(
+            "ai_summarizing_start",
+            query_execution,
+            namespace=QUERY_EXECUTION_NAMESPACE,
+            room=self._query_execution_id,
+        )
+
+
+    def on_ai_summarizing_end(self, statement_id, statement, statement_summary):
+        with DBSession() as session:
+            qe_logic.update_statement_execution(
+                statement_id,
+                status=StatementExecutionStatus.RUNNING,
+                statement_sql=statement,
+                ai_explain=statement_summary,
+                session=session,
+            )
+
     def on_statement_start(self, statement_index):
         self.reset_logging_variables()
 
         statement_range = self._statement_ranges[statement_index]
         statement_start, statement_end = statement_range
-
+        query = self._query[statement_start:statement_end]
         statement_execution = qe_logic.create_statement_execution(
             self._query_execution_id,
+            query,
             statement_start,
             statement_end,
             StatementExecutionStatus.RUNNING,
@@ -135,6 +163,8 @@ class QueryExecutorLogger(object):
             namespace=QUERY_EXECUTION_NAMESPACE,
             room=self._query_execution_id,
         )
+
+        return statement_execution_id
 
     def on_statement_update(
         self,
@@ -562,7 +592,7 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
         try:
             if self.status == QueryExecutionStatus.DELIVERED:
                 self.start()
-            elif self.status != QueryExecutionStatus.RUNNING:
+            elif self.status != QueryExecutionStatus.RUNNING and self.status != QueryExecutionStatus.AI_SUMMARIZING:
                 return
 
             current_statement_completed = self._is_statement_completed()
@@ -603,12 +633,15 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
 
     def _run_next_statement(self):
         if self._current_query_index < len(self._statement_ranges):
-            self._logger.on_statement_start(self._current_query_index)
+            statement_id = self._logger.on_statement_start(self._current_query_index)
 
             statement_range = self._statement_ranges[self._current_query_index]
             statement_start, statement_end = statement_range
 
             statement = self._query[statement_start:statement_end]
+            self._logger.on_ai_summarizing_start()
+            statement_summary = self._ask_ai(statement)
+            self._logger.on_ai_summarizing_end(statement_id, statement, statement_summary)
             self._execute(statement)
             self._current_query_index += 1
         else:
@@ -650,6 +683,21 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
 
     def _execute(self, statement):
         self._cursor.run(statement)
+
+    def _ask_ai(self, statement):
+        metastore_ids = [
+            env.metastore_id
+            for env in qe_logic.get_metastore_id_by_execution_id(self._query_execution_id)
+        ]
+
+        summary = ""
+        for metastore_id in metastore_ids:
+            summary = ai_assistant.summarize_query(
+                metastore_id=metastore_id,
+                query=statement,
+                table_names=None
+            )
+        return summary
 
     def _is_statement_completed(self):
         completed = self._cursor.poll()

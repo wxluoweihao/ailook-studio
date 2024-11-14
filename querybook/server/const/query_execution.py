@@ -15,6 +15,7 @@ class QueryExecutionStatus(Enum):
     DONE = 3
     ERROR = 4
     CANCEL = 5
+    AI_SUMMARIZING = 6
 
 
 class StatementExecutionStatus(Enum):

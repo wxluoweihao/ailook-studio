@@ -120,7 +120,7 @@ module.exports = (env, options) => {
         entry.custom = customScriptPath;
     }
 
-    const appName = process.env.QUERYBOOK_APPNAME || 'Querybook';
+    const appName = process.env.QUERYBOOK_APPNAME || 'AILook Studio';
     const devServer = env.WEBPACK_SERVE ? getDevServerSettings(env) : {};
 
     return {
