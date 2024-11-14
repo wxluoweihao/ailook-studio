@@ -5,7 +5,7 @@ services:
         image: ailook-web:latest
         # tty: true
         # stdin_open: true
-        network_mode: 'host'
+#        network_mode: 'host'
         environment:
             PORT: ${PORT}
         volumes:
@@ -28,3 +28,53 @@ services:
         extends:
             service: base
         command: './querybook/scripts/runservice prod_scheduler'
+    redis:
+        container_name: querybook_redis
+        image: redis:5.0.9
+        restart: always
+        command: [ 'redis-server', '--appendonly', 'yes' ]
+        hostname: redis
+        ports:
+            - '6379:6379'
+        healthcheck:
+            test: [ 'CMD', 'redis-cli', 'ping' ]
+            interval: 30s
+            timeout: 10s
+            retries: 3
+    elasticsearch:
+        container_name: querybook_elasticsearch
+        image: opensearchproject/opensearch:2.9.0
+        environment:
+                cluster.name: docker-cluster
+                bootstrap.memory_lock: 'true'
+                discovery.type: single-node
+                plugins.security.disabled: 'true'
+                OPENSEARCH_JAVA_OPTS: -Xms750m -Xmx750m
+        ulimits:
+            memlock:
+                soft: -1
+                hard: -1
+            nofile:
+                soft: 65536
+                hard: 65536
+        volumes:
+            - osdata1:/usr/share/opensearch/data
+        ports:
+            - 9200:9200
+        healthcheck:
+            test:
+                [
+                    'CMD-SHELL',
+                    'curl --silent --fail localhost:9200/_cluster/health || exit 1',
+                ]
+            interval: 30s
+            timeout: 30s
+            retries: 3
+networks:
+    ailineage_network:
+        driver: bridge
+
+volumes:
+    my-db:
+    osdata1:
+        driver: local
