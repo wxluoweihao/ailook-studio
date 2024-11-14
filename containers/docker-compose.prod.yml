@@ -5,7 +5,7 @@ services:
         image: ailook-web:latest
         # tty: true
         # stdin_open: true
-#        network_mode: 'host'
+        network_mode: 'host'
         environment:
             PORT: 10001
         volumes:
@@ -16,6 +16,7 @@ services:
             - /opt/querybook/node_modules/
             # Make sure the build files don't leak back
             - /opt/querybook/dist/
+            - $PWD/containers/querybook_config.yaml:/opt/querybook/querybook/config/querybook_config.yaml
     web:
         extends:
             service: base
@@ -70,9 +71,9 @@ services:
             interval: 30s
             timeout: 30s
             retries: 3
-networks:
-    ailineage_network:
-        driver: bridge
+#networks:
+#    ailineage_network:
+#        driver: bridge
 
 volumes:
     my-db:
