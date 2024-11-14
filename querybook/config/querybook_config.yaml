@@ -14,23 +14,23 @@ AI_ASSISTANT_CONFIG:
      default:
          model_args:
              model: 'qwen-max'
-             api_key: 'sk-13eeac42861e466b9e3dbead89a8005c'
+             api_key: 'abcdefghijklmn'
              temperature: 0
          reserved_tokens: 1024
      table_summary:
          model_args:
              model: 'qwen-max'
-             api_key: 'sk-13eeac42861e466b9e3dbead89a8005c'
+             api_key: 'abcdefghijklmn'
              temperature: 0
      sql_summary:
          model_args:
              model: 'qwen-max'
-             api_key: 'sk-13eeac42861e466b9e3dbead89a8005c'
+             api_key: 'abcdefghijklmn'
              temperature: 0
      table_select:
          model_args:
              model: 'qwen-max'
-             api_key: 'sk-13eeac42861e466b9e3dbead89a8005c'
+             api_key: 'abcdefghijklmn'
              temperature: 0
 
 # Uncomment below to enable vector store to support embedding based table search.
@@ -38,7 +38,7 @@ AI_ASSISTANT_CONFIG:
 
 EMBEDDINGS_PROVIDER: dashscope
 EMBEDDINGS_CONFIG:
-    dashscope_api_key: 'sk-13eeac42861e466b9e3dbead89a8005c'
+    dashscope_api_key: 'abcdefghijklmn'
 
 VECTOR_STORE_PROVIDER: opensearch
 VECTOR_STORE_CONFIG:

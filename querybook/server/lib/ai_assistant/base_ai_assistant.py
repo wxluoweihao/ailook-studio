@@ -405,7 +405,7 @@ class BaseAIAssistant(ABC):
         """
         try:
             client = OpenAI(
-                api_key="sk-13eeac42861e466b9e3dbead89a8005c",
+                api_key="abcdefghijklmn",
                 base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
             )
             completion = client.chat.completions.create(
