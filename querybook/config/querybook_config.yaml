@@ -2,8 +2,8 @@
 FLASK_SECRET_KEY: SOME_RANDOM_SECRET_KEY
 
 DATABASE_CONN: postgresql+psycopg2://querybook-user:lq3X7mU0nGrFrUcUlwsdlL9cl9vBsjL4Mt3XmXbE1PyZFSpeSs63EgWf3IG7yPjc@8.210.27.71:45432/postgres
-REDIS_URL: redis://redis:6379/0
-ELASTICSEARCH_HOST: http://elasticsearch:9200
+REDIS_URL: redis://localhost:6379/0
+ELASTICSEARCH_HOST: http://localhost:9200
 # ELASTICSEARCH_CONNECTION_TYPE: aws
 # Uncomment for email
 # EMAILER_CONN: dockerhostforward
