@@ -1,6 +1,8 @@
 # AILook Studio
 
 AILook Studio is a tool base on querybook IDE that allows you to do dataset analysis with AI and data lineage information.
+#### https://github.com/wxluoweihao/ailook-studio.git
+
 
 # Project Purpose
 ### User Level
